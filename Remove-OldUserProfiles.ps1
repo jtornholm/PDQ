@@ -16,7 +16,7 @@ This will remove all the profiles which are 15 days or older.
 #>
 [CmdletBinding()]
 param(
-	[Parameter(Mandatory=$false)][int]$DaysBeforeDeletion = 15
+	[Parameter(Mandatory=$false)][int]$DaysBeforeDeletion = 30
 )
 begin {
 	if(-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
@@ -28,7 +28,7 @@ begin {
 	# User profiles which should never be removed regardless of age.
 	$NeverDelete = @(
 		"Administrator",
-        "Administratör",
+        "AdministratÃ¶r",
 		"Public",
 		"LocalService",
 		"NetworkService",
@@ -62,7 +62,7 @@ begin {
 	foreach($UserProfile in $OldUserProfiles) {
 		try {
 			(Get-WmiObject Win32_UserProfile | Where-Object { $_.LocalPath -like "*$($UserProfile.FullName)*"}).Delete()
-			Remove-item -Path $UserProfile.FullName -Force -Recurse
+			
 		} catch {
 			Write-Error -Message "There was an error removing the user profile $($UserProfile.Name)."
 			Write-Error -Message $_.Exception.Message
